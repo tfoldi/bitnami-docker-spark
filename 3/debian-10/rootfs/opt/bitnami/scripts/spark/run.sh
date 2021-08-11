@@ -20,7 +20,7 @@ if [ "$SPARK_MODE" == "master" ]; then
     ARGS=()
     info "** Starting Spark in master mode **"
 elif [ "$SPARK_MODE" == "thriftserver" ]; then
-    # Master constants
+    # Thriftserver constants
     EXEC=$(command -v start-thriftserver.sh)
     ARGS=()
     info "** Starting Spark Thriftserver **"
