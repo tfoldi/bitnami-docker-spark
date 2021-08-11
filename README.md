@@ -96,7 +96,7 @@ $ docker run -d --name spark \
 
 Available variables:
 
-* SPARK_MODE: Cluster mode starting Spark. Valid values: *master*, *worker*. Default: **master**
+* SPARK_MODE: Cluster mode starting Spark. Valid values: *master*, *worker* or *thriftserver*. Default: **master**
 * SPARK_MASTER_URL: Url where the worker can find the master. Only needed when spark mode is *worker*. Default: **spark://spark-master:7077**
 * SPARK_RPC_AUTHENTICATION_ENABLED: Enable RPC authentication. Default: **no**
 * SPARK_RPC_AUTHENTICATION_SECRET: The secret key used for RPC authentication. No defaults.
@@ -112,6 +112,7 @@ Available variables:
 * SPARK_SSL_PROTOCOL: TLS protocol to use. Default: **TLSv1.2**
 * SPARK_DAEMON_USER: Spark system user when the container is started as root. Default: **spark**
 * SPARK_DAEMON_GROUP: Spark system group when the container is started as root. Default: **spark**
+* SPARK_DRIVER_HOST: Internal IPv4 address of the container. No defaults.
 
 More environment variables natively supported by Spark can be found [at the official documentation](https://spark.apache.org/docs/latest/spark-standalone.html#cluster-launch-scripts).
 For example, you could still use `SPARK_WORKER_CORES` or `SPARK_WORKER_MEMORY` to configure the number of cores and the amount of memory to be used by a worker machine.
