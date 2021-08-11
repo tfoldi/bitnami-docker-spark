@@ -242,7 +242,7 @@ spark_set_driver_host() {
 ########################
 # Creates an empty hive metastore with derby in-memory db
 # Globals:
-#   SPARK_*
+#   None
 # Arguments:
 #   None
 # Returns:
