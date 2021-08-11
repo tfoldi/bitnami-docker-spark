@@ -84,10 +84,10 @@ spark_validate() {
 
     # Validate spark mode
     case "$SPARK_MODE" in
-    master | worker) ;;
+    master | worker | thriftserver ) ;;
 
     *)
-        print_validation_error "Invalid mode $SPARK_MODE. Supported types are 'master/worker'"
+        print_validation_error "Invalid mode $SPARK_MODE. Supported types are 'master/worker/thriftserver'"
         ;;
     esac
 
@@ -97,7 +97,7 @@ spark_validate() {
     fi
 
     # Validate worker node inputs
-    if [[ "$SPARK_MODE" == "worker" ]]; then
+    if [[ "$SPARK_MODE" != "master" ]]; then
         if [[ -z "$SPARK_MASTER_URL" ]]; then
             print_validation_error "For worker nodes you need to specify the SPARK_MASTER_URL"
         fi
@@ -218,6 +218,27 @@ spark_enable_metrics() {
 }
 
 ########################
+# Enable metrics
+# Globals:
+#   SPARK_*
+# Arguments:
+#   None
+# Returns:
+#   None
+#########################
+spark_set_driver_host() {
+    info "Configuring driver host..."
+
+    if [[ -z "${SPARK_DRIVER_HOST}" ]] ; then
+        if validate_ipv4 "${SPARK_DRIVER_HOST}" ; then
+            spark_conf_set spark.driver.host "${SPARK_DRIVER_HOST}"
+        else
+            print_validation_error "SPARK_DRIVER_HOST is not a valid ipv4 address"
+        fi
+    fi
+}
+
+########################
 # Configure Spark SSL (https://spark.apache.org/docs/latest/security.html#ssl-configuration)
 # Globals:
 #   SPARK_*
@@ -333,4 +354,6 @@ spark_initialize() {
     else
         info "Detected mounted configuration file..."
     fi
+
+
 }
