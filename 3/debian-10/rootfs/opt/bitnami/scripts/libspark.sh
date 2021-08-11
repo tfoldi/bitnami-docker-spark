@@ -218,7 +218,7 @@ spark_enable_metrics() {
 }
 
 ########################
-# Enable metrics
+# Set driver host to a custom value
 # Globals:
 #   SPARK_*
 # Arguments:
@@ -236,6 +236,23 @@ spark_set_driver_host() {
             print_validation_error "SPARK_DRIVER_HOST is not a valid ipv4 address"
         fi
     fi
+}
+
+
+########################
+# Creates an empty hive metastore with derby in-memory db
+# Globals:
+#   SPARK_*
+# Arguments:
+#   None
+# Returns:
+#   None
+#########################
+spark_default_hive_metastore() {
+    info "Set default in-memory hive metastore"
+
+    spark_conf_set "spark.hadoop.javax.jdo.option.ConnectionURL" "jdbc:derby:memory:myInMemDB;create=true"
+    spark_conf_set "spark.sql.warehouse.dir" "/tmp"
 }
 
 ########################
@@ -350,6 +367,11 @@ spark_initialize() {
         # Enable metrics
         if is_boolean_yes "$SPARK_METRICS_ENABLED"; then
             spark_enable_metrics
+        fi
+
+        # initialize empty metastore by default for thriftserver
+        if [ "$SPARK_MODE" == "thriftserver" ]; then
+            spark_default_hive_metastore
         fi
     else
         info "Detected mounted configuration file..."
