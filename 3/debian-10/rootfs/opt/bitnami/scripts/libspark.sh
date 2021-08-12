@@ -46,7 +46,7 @@ export SPARK_RPC_ENCRYPTION_ENABLED="${SPARK_RPC_ENCRYPTION_ENABLED:-no}"
 export SPARK_LOCAL_STORAGE_ENCRYPTION_ENABLED="${SPARK_LOCAL_STORAGE_ENCRYPTION_ENABLED:-no}"
 
 #  Networking
-export SPARK_DRIVER_HOST="${SPARK_DRIVER_HOST:-}
+export SPARK_DRIVER_HOST="${SPARK_DRIVER_HOST:-}"
 
 # SSL
 export SPARK_SSL_ENABLED="${SPARK_SSL_ENABLED:-no}"
@@ -254,12 +254,12 @@ spark_set_driver_host() {
 spark_default_hive_metastore() {
     info "Set default in-memory hive metastore"
 
-    metastore_dir="/opt/bitnami/spark/metastore"
-    ensure_dir_exists "$metastore_dir"
-    am_i_root && chown "$SPARK_DAEMON_USER:$SPARK_DAEMON_GROUP" "$metastore_dir"
+    warehouse_dir="/opt/bitnami/spark/work/warehouse"
+    ensure_dir_exists "${warehouse_dir}"
+    am_i_root && chown "$SPARK_DAEMON_USER:$SPARK_DAEMON_GROUP" "${warehouse_dir}"
 
     spark_conf_set "spark.hadoop.javax.jdo.option.ConnectionURL" "jdbc:derby:memory:myInMemDB;create=true"
-    spark_conf_set "spark.sql.warehouse.dir" "${metastore_dor}"
+    spark_conf_set "spark.sql.warehouse.dir" "${warehouse_dir}"
 }
 
 ########################
