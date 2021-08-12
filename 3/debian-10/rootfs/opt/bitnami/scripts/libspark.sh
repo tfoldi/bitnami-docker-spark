@@ -45,6 +45,9 @@ export SPARK_RPC_ENCRYPTION_ENABLED="${SPARK_RPC_ENCRYPTION_ENABLED:-no}"
 # Local Storage Encryption
 export SPARK_LOCAL_STORAGE_ENCRYPTION_ENABLED="${SPARK_LOCAL_STORAGE_ENCRYPTION_ENABLED:-no}"
 
+#  Networking
+export SPARK_DRIVER_HOST="${SPARK_DRIVER_HOST:-}
+
 # SSL
 export SPARK_SSL_ENABLED="${SPARK_SSL_ENABLED:-no}"
 export SPARK_SSL_KEY_PASSWORD="${SPARK_SSL_KEY_PASSWORD:-}"
@@ -99,7 +102,7 @@ spark_validate() {
     # Validate worker node inputs
     if [[ "$SPARK_MODE" != "master" ]]; then
         if [[ -z "$SPARK_MASTER_URL" ]]; then
-            print_validation_error "For worker nodes you need to specify the SPARK_MASTER_URL"
+            print_validation_error "For non-master nodes you need to specify the SPARK_MASTER_URL"
         fi
     fi
 
@@ -229,7 +232,7 @@ spark_enable_metrics() {
 spark_set_driver_host() {
     info "Configuring driver host..."
 
-    if [[ -z "${SPARK_DRIVER_HOST}" ]] ; then
+    if [[ "${SPARK_DRIVER_HOST}" ]] ; then
         if validate_ipv4 "${SPARK_DRIVER_HOST}" ; then
             spark_conf_set spark.driver.host "${SPARK_DRIVER_HOST}"
         else
@@ -251,8 +254,12 @@ spark_set_driver_host() {
 spark_default_hive_metastore() {
     info "Set default in-memory hive metastore"
 
+    metastore_dir="/opt/bitnami/spark/metastore"
+    ensure_dir_exists "$metastore_dir"
+    am_i_root && chown "$SPARK_DAEMON_USER:$SPARK_DAEMON_GROUP" "$metastore_dir"
+
     spark_conf_set "spark.hadoop.javax.jdo.option.ConnectionURL" "jdbc:derby:memory:myInMemDB;create=true"
-    spark_conf_set "spark.sql.warehouse.dir" "/tmp"
+    spark_conf_set "spark.sql.warehouse.dir" "${metastore_dor}"
 }
 
 ########################
@@ -370,12 +377,11 @@ spark_initialize() {
         fi
 
         # initialize empty metastore by default for thriftserver
-        if [ "$SPARK_MODE" == "thriftserver" ]; then
+        if [[ "$SPARK_MODE" == "thriftserver" ]]; then
             spark_default_hive_metastore
         fi
     else
         info "Detected mounted configuration file..."
     fi
-
 
 }
