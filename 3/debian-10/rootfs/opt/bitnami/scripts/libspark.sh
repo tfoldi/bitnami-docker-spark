@@ -383,5 +383,4 @@ spark_initialize() {
     else
         info "Detected mounted configuration file..."
     fi
-
 }
