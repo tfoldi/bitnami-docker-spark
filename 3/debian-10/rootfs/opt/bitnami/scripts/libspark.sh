@@ -232,12 +232,10 @@ spark_enable_metrics() {
 spark_set_driver_host() {
     info "Configuring driver host..."
 
-    if [[ "${SPARK_DRIVER_HOST}" ]] ; then
-        if validate_ipv4 "${SPARK_DRIVER_HOST}" ; then
-            spark_conf_set spark.driver.host "${SPARK_DRIVER_HOST}"
-        else
-            print_validation_error "SPARK_DRIVER_HOST is not a valid ipv4 address"
-        fi
+    if validate_ipv4 "${SPARK_DRIVER_HOST}" ; then
+        spark_conf_set spark.driver.host "${SPARK_DRIVER_HOST}"
+    else
+        print_validation_error "SPARK_DRIVER_HOST is not a valid ipv4 address"
     fi
 }
 
@@ -382,5 +380,9 @@ spark_initialize() {
         fi
     else
         info "Detected mounted configuration file..."
+    fi
+
+    if [[ "${SPARK_DRIVER_HOST}" ]] ; then
+        spark_set_driver_host()
     fi
 }
