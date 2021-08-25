@@ -232,11 +232,7 @@ spark_enable_metrics() {
 spark_set_driver_host() {
     info "Configuring driver host..."
 
-    if validate_ipv4 "${SPARK_DRIVER_HOST}" ; then
-        spark_conf_set spark.driver.host "${SPARK_DRIVER_HOST}"
-    else
-        print_validation_error "SPARK_DRIVER_HOST is not a valid ipv4 address"
-    fi
+    spark_conf_set spark.driver.host "${SPARK_DRIVER_HOST}"
 }
 
 
@@ -250,7 +246,7 @@ spark_set_driver_host() {
 #   None
 #########################
 spark_default_hive_metastore() {
-    info "Set default in-memory hive metastore"
+    info "Configuring default in-memory hive metastore..."
 
     warehouse_dir="/opt/bitnami/spark/work/warehouse"
     ensure_dir_exists "${warehouse_dir}"
@@ -383,6 +379,6 @@ spark_initialize() {
     fi
 
     if [[ "${SPARK_DRIVER_HOST}" ]] ; then
-        spark_set_driver_host()
+        spark_set_driver_host
     fi
 }
