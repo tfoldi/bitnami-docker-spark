@@ -26,7 +26,7 @@ elif [ "$SPARK_MODE" == "thriftserver" ]; then
     info "** Starting Spark Thriftserver **"
 else
     # Worker constants
-    EXEC=$(command -v start-slave.sh)
+    EXEC=$(command -v start-worker.sh)
     ARGS=("$SPARK_MASTER_URL")
     info "** Starting Spark in worker mode **"
 fi
