@@ -22,7 +22,7 @@ if [ "$SPARK_MODE" == "master" ]; then
 elif [ "$SPARK_MODE" == "thriftserver" ]; then
     # Thriftserver constants
     EXEC=$(command -v start-thriftserver.sh)
-    ARGS=("-master" "$SPARK_MASTER_URL")
+    ARGS=("--master" "$SPARK_MASTER_URL")
     info "** Starting Spark Thriftserver **"
 else
     # Worker constants
